@@ -43,6 +43,13 @@ def get_model_accuracy(model: nn.Module, data_loader: DataLoader) -> float:
     return num_correct / len(data_loader.dataset)
 
 
+def save_model(model: nn.Module, filepath: str) -> None:
+    """Saves a model at the given filepath.
+    """
+    with open(filepath, "wb+") as f:
+        torch.save(model, f)
+
+
 def train(
     model: nn.Module,
     data_loader: DataLoader,
@@ -77,13 +84,13 @@ def main():
     Adam optimizer.
     """
     model = LeNet5(num_classes=10)
-    print(model.parameters())
     training_data_loader = get_mnist_data_loader()
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     train(model, training_data_loader, loss_fn, optimizer, num_epochs=NUM_EPOCHS)
     training_accuracy = get_model_accuracy(model, training_data_loader)
     print(f"Training set accuracy: {training_accuracy}")
+    save_model(model, "model/lenet_5.pickle")
 
 
 if __name__ == "__main__":
