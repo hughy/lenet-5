@@ -21,7 +21,8 @@ class LeNet5(nn.Module):
     Fully connected: 84 units
     Softmax: 10 classes
     """
-    def __init__(self):
+
+    def __init__(self, num_classes: int):
         super(LeNet5, self).__init__()
 
         self.extractor = nn.Sequential(
@@ -38,7 +39,7 @@ class LeNet5(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(in_features=120, out_features=84),
             nn.Tanh(),
-            nn.Linear(in_features=84, out_features=10),
+            nn.Linear(in_features=84, out_features=num_classes),
         )
 
     def forward(self, x):
