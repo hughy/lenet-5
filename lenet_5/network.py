@@ -45,6 +45,5 @@ class LeNet5(nn.Module):
             nn.Linear(in_features=84, out_features=num_classes),
         )
 
-    def forward(self, x):
-        logits = self.layers(x)
-        return F.softmax(logits, dim=1)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return F.softmax(self.layers(x), dim=1)

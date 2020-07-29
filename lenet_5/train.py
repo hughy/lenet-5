@@ -13,7 +13,7 @@ torch.manual_seed(1)
 
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 16
+NUM_EPOCHS = 10
 
 
 def get_mnist_data_loader(train: bool = True) -> DataLoader:
@@ -53,7 +53,7 @@ def save_model(model: nn.Module, filepath: str) -> None:
 def train(
     model: nn.Module,
     data_loader: DataLoader,
-    loss_fn: nn.Module,
+    criterion: nn.Module,
     optimizer: torch.optim.Optimizer,
     num_epochs: int,
     print_every_nth: int = 1,
@@ -65,7 +65,7 @@ def train(
         for x, y in data_loader:
             optimizer.zero_grad()
             y_hat = model(x)
-            loss = loss_fn(y_hat, y)
+            loss = criterion(y_hat, y)
             loss.backward()
             epoch_loss += loss.item() * x.size(0)
             optimizer.step()
@@ -84,9 +84,9 @@ def main() -> None:
     """
     model = LeNet5(num_classes=10)
     training_data_loader = get_mnist_data_loader()
-    loss_fn = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-    train(model, training_data_loader, loss_fn, optimizer, num_epochs=NUM_EPOCHS)
+    train(model, training_data_loader, criterion, optimizer, num_epochs=NUM_EPOCHS)
     training_accuracy = get_model_accuracy(model, training_data_loader)
     print(f"Training set accuracy: {training_accuracy}")
     save_model(model, "model/lenet_5.pickle")
