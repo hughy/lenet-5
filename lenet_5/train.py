@@ -6,14 +6,14 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision import transforms
 
-from lenet_5.networks import LeNet5
+from lenet_5.network import LeNet5
 
 np.random.seed(1)
 torch.manual_seed(1)
 
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 1
+NUM_EPOCHS = 16
 
 
 def get_mnist_data_loader(train: bool = True) -> DataLoader:
@@ -63,13 +63,12 @@ def train(
     for epoch in range(num_epochs):
         epoch_loss = 0
         for x, y in data_loader:
-            # Reset gradients
             optimizer.zero_grad()
             y_hat = model(x)
             loss = loss_fn(y_hat, y)
             loss.backward()
-            optimizer.step()
             epoch_loss += loss.item() * x.size(0)
+            optimizer.step()
 
         if (epoch + 1) % print_every_nth == 0:
             print(
@@ -77,7 +76,7 @@ def train(
             )
 
 
-def main():
+def main() -> None:
     """Trains a LeNet-5 model for handwritten digit classification.
     
     Uses the MNIST dataset for training, the cross entropy loss function, and the
