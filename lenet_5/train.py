@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision import transforms
@@ -30,7 +29,7 @@ def get_mnist_data_loader(train: bool = True) -> DataLoader:
     return DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 
-def get_model_accuracy(model: nn.Module, data_loader: DataLoader) -> float:
+def get_model_accuracy(model: torch.nn.Module, data_loader: DataLoader) -> float:
     """Computes the accuracy of a model for a given dataset.
     """
     num_correct = 0
@@ -43,7 +42,7 @@ def get_model_accuracy(model: nn.Module, data_loader: DataLoader) -> float:
     return num_correct / len(data_loader.dataset)
 
 
-def save_model(model: nn.Module, filepath: str) -> None:
+def save_model(model: torch.nn.Module, filepath: str) -> None:
     """Saves a model at the given filepath.
     """
     with open(filepath, "wb+") as f:
@@ -51,9 +50,9 @@ def save_model(model: nn.Module, filepath: str) -> None:
 
 
 def train(
-    model: nn.Module,
+    model: torch.nn.Module,
     data_loader: DataLoader,
-    criterion: nn.Module,
+    criterion: torch.nn.Module,
     optimizer: torch.optim.Optimizer,
     num_epochs: int,
     print_every_nth: int = 1,
@@ -84,7 +83,7 @@ def main() -> None:
     """
     model = LeNet5(num_classes=10)
     training_data_loader = get_mnist_data_loader()
-    criterion = nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     train(model, training_data_loader, criterion, optimizer, num_epochs=NUM_EPOCHS)
     training_accuracy = get_model_accuracy(model, training_data_loader)
