@@ -49,6 +49,14 @@ def save_model(model: torch.nn.Module, filepath: str) -> None:
         torch.save(model, f)
 
 
+def save_model_as_torchscript(model: torch.nn.Module, data_loader: DataLoader, filepath: str) -> None:
+    """
+    """
+    X, y = next(iter(data_loader))
+    traced_script_model = torch.jit.trace(model, X)
+    traced_script_model.save(filepath)
+
+
 def train(
     model: torch.nn.Module,
     data_loader: DataLoader,
@@ -88,7 +96,7 @@ def main() -> None:
     train(model, training_data_loader, criterion, optimizer, num_epochs=NUM_EPOCHS)
     training_accuracy = get_model_accuracy(model, training_data_loader)
     print(f"Training set accuracy: {training_accuracy}")
-    save_model(model, "model/lenet_5.pickle")
+    save_model_as_torchscript(model, training_data_loader, "model/lenet_5.pt")
 
 
 if __name__ == "__main__":
