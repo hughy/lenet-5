@@ -12,7 +12,7 @@ torch.manual_seed(1)
 
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 10
+NUM_EPOCHS = 5
 
 
 def get_mnist_data_loader(train: bool = True) -> DataLoader:
@@ -24,6 +24,22 @@ def get_mnist_data_loader(train: bool = True) -> DataLoader:
 
     dataset = datasets.MNIST(
         root="mnist_data", train=train, transform=data_transforms, download=True
+    )
+
+    return DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
+
+
+def get_emnist_data_loader(train: bool = True) -> DataLoader:
+    """Initializes a DataLoader for the EMNist dataset.
+
+    EMNIST contains uppercase and lowercase letters in addition to digits.
+    """
+    data_transforms = transforms.Compose(
+        [transforms.Resize((32, 32)), transforms.ToTensor()]
+    )
+
+    dataset = datasets.EMNIST(
+        root="emnist_data", split="byclass", train=train, transform=data_transforms, download=True
     )
 
     return DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -68,6 +84,7 @@ def train(
     """Trains a model on a given dataset.
     """
     for epoch in range(num_epochs):
+        print(f"Starting epoch {epoch + 1}...")
         epoch_loss = 0
         for x, y in data_loader:
             optimizer.zero_grad()
@@ -85,18 +102,18 @@ def train(
 
 def main() -> None:
     """Trains a LeNet-5 model for handwritten digit classification.
-    
+
     Uses the MNIST dataset for training, the cross entropy loss function, and the
     Adam optimizer.
     """
-    model = LeNet5(num_classes=10)
-    training_data_loader = get_mnist_data_loader()
+    model = LeNet5(num_classes=62)
+    training_data_loader = get_emnist_data_loader()
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     train(model, training_data_loader, criterion, optimizer, num_epochs=NUM_EPOCHS)
     training_accuracy = get_model_accuracy(model, training_data_loader)
     print(f"Training set accuracy: {training_accuracy}")
-    save_model_as_torchscript(model, training_data_loader, "model/lenet_5.pt")
+    save_model_as_torchscript(model, training_data_loader, "model/lenet_5_emnist.pt")
 
 
 if __name__ == "__main__":
